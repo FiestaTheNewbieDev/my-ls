@@ -4,7 +4,7 @@ TARGET = ls
 # Compiler
 CC = gcc
 # Compiler flags
-CFLAGS = -Wall -Wextra -Werror -I$(INCLUDE_DIR)
+CFLAGS = -Wall -Wextra -Werror -I$(INCLUDE_DIR) -Wno-unused-variable
 
 # Directories
 SRC_DIR = src

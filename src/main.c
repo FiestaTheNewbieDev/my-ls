@@ -3,11 +3,12 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <directory.h>
+#include "flags.h"
 
 int main(int argc, char *argv[]) {
-    char path;
-    
-    char **args = parse_flags(argv, &path);
+    char path[256] = ".";
+
+    char **args = get_flags(argc, argv, path);
 
     int file_count;
     char **files = list_files(path, false, false, &file_count);
