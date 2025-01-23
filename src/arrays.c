@@ -10,3 +10,11 @@ bool includes(char *arr[], int len, char *str) {
     }
     return false;
 }
+
+int len(char *arr[]) {
+    int i = 0;
+    while (arr[i] != NULL) {
+        i++;
+    }
+    return i;
+}
