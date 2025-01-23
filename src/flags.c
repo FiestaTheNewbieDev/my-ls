@@ -11,8 +11,9 @@ char **get_flags(int argc, char *argv[], char **path, int *count) {
 
     for (int i = 0; i < argc; i++){
         if (argv[i][0] == '-') {
-            flags = realloc(flags, ++flag_count * sizeof(char*));
-            flags[i] = argv[i];
+            flags = realloc(flags, (flag_count + 1) * sizeof(char*));
+            flags[flag_count] = argv[i];
+            flag_count++;
         } else { 
             if (is_directory(argv[i])) {
                 size_t len = strlen(argv[i]) + 1;

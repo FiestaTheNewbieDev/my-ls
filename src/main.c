@@ -36,5 +36,9 @@ int main(int argc, char *argv[]) {
         printf("%s\n", flags[i]);
     }
 
+    free(files);
+    free(flags);
+    free(path);
+
     return EXIT_SUCCESS;
 }
