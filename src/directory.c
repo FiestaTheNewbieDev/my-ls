@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <string.h>
 #include "directory.h"
+#include <stdio.h>
 
 bool is_directory(char *path) {
     DIR *dir = opendir(path);
@@ -26,10 +27,14 @@ char** list_files(char *path, bool almost_all, bool all, int *count) {
     if (dir == NULL) return NULL;
 
     while ((entry = readdir(dir)) != NULL) {
-        if (!all && entry->d_name[0] == '.') continue;
-
-        if (!almost_all && (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0)) continue;
-
+        if (!all) {
+            if (almost_all) {
+                if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
+            } else {
+                if (entry->d_name[0] == '.') continue;
+            }
+        }
+        
         files = realloc(files, sizeof(char*) * (file_count + 1));
         if (files == NULL) {
             closedir(dir);
