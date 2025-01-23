@@ -5,6 +5,7 @@
 #include <directory.h>
 #include <string.h>
 #include "flags.h"
+#include "arrays.h"
 
 #define INITIAL_PATH_SIZE 1
 
@@ -21,7 +22,7 @@ int main(int argc, char *argv[]) {
     char **flags = get_flags(argc, argv, &path, &flag_count);
 
     int file_count;
-    char **files = list_files(path, false, false, &file_count);
+    char **files = list_files(path, includes(flags, flag_count, "-A"), includes(flags, flag_count, "-a"), &file_count);
 
     if (files == NULL) {
         free(path);
@@ -30,10 +31,6 @@ int main(int argc, char *argv[]) {
 
     for (int i = 0; i < file_count; i++) {
         printf("%s\n", files[i]);
-    }
-
-    for (int i = 0; i < flag_count; i++) {
-        printf("%s\n", flags[i]);
     }
 
     free(files);
