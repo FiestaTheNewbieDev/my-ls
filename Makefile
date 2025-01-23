@@ -4,7 +4,7 @@ TARGET = ls
 # Compiler
 CC = gcc
 # Compiler flags
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -I$(INCLUDE_DIR)
 
 # Directories
 SRC_DIR = src
