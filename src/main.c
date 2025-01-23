@@ -2,10 +2,12 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stddef.h>
-#include <directory.h>
+
 #include <string.h>
 #include "flags.h"
 #include "arrays.h"
+#include "display.h"
+#include "directory.h"
 
 #define INITIAL_PATH_SIZE 1
 
@@ -29,9 +31,7 @@ int main(int argc, char *argv[]) {
         return EXIT_SUCCESS;
     }
 
-    for (int i = 0; i < file_count; i++) {
-        printf("%s\n", files[i]);
-    }
+    simple_display(files, file_count);
 
     free(files);
     free(flags);
