@@ -5,6 +5,8 @@
 #include <string.h>
 #include "directory.h"
 #include <stdio.h>
+#include <sys/stat.h>
+#include <limits.h>
 
 bool is_directory(char *path) {
     DIR *dir = opendir(path);
@@ -15,10 +17,10 @@ bool is_directory(char *path) {
     return false;
 }
 
-char** list_files(char *path, bool almost_all, bool all, int *count) {
+file_info* list_files(char *path, bool almost_all, bool all, int *count) {
     DIR *dir;
     struct dirent *entry;
-    char **files = NULL;
+    file_info* files = NULL;
     int file_count = 0;
 
     if (!is_directory(path)) return NULL;
@@ -35,12 +37,22 @@ char** list_files(char *path, bool almost_all, bool all, int *count) {
             }
         }
         
-        files = realloc(files, sizeof(char*) * (file_count + 1));
+        files = realloc(files, sizeof(file_info) * (file_count + 1));
         if (files == NULL) {
             closedir(dir);
             return NULL;
         }
-        files[file_count] = strdup(entry->d_name);
+
+        files[file_count].name = strdup(entry->d_name);
+        char full_path[PATH_MAX];
+        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
+        if (stat(full_path, &files[file_count].stat) == -1) {
+            perror("stat");
+            closedir(dir);
+            free(files);
+            return NULL;
+        }
+
         file_count++;
     }
 

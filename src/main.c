@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stddef.h>
-
 #include <string.h>
 #include "flags.h"
 #include "arrays.h"
@@ -24,14 +23,18 @@ int main(int argc, char *argv[]) {
     char **flags = get_flags(argc, argv, &path, &flag_count);
 
     int file_count;
-    char **files = list_files(path, includes(flags, flag_count, "-A"), includes(flags, flag_count, "-a"), &file_count);
+    file_info* files = list_files(path, includes(flags, flag_count, "-A"), includes(flags, flag_count, "-a"), &file_count);
 
     if (files == NULL) {
         free(path);
         return EXIT_SUCCESS;
     }
 
-    simple_display(files, file_count);
+    if (includes(flags, flag_count, "-l")) {
+        detailed_display(files, file_count);
+    } else {
+        simple_display(files, file_count);
+    }
 
     free(files);
     free(flags);

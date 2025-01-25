@@ -1,6 +1,9 @@
 #ifndef DISPLAY_H
 #define DISPLAY_H
 
-void simple_display(char **files, int file_count);
+#include <directory.h>
+
+void simple_display(file_info* files, int file_count);
+void detailed_display(file_info* files, int file_count);
 
 #endif

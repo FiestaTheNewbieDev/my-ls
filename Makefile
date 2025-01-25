@@ -1,5 +1,5 @@
 # Executable name
-TARGET = ls
+TARGET = my_ls
 
 # Compiler
 CC = gcc
