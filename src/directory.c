@@ -54,15 +54,14 @@ file* list_files(char *path, bool almost_all, bool all, int *count, int *total) 
             return NULL;
         }
 
-        printf("- %s: %ld\n", files[file_count].name, files[file_count].stat.st_blocks);
-        total_size = files[file_count].stat.st_blocks;
+        total_size += files[file_count].stat.st_blocks;
 
         file_count++;
     }
 
     closedir(dir);
     *count = file_count;
-    *total = total_size;
+    *total = total_size / 2;
     return files;
 }
 
@@ -120,6 +119,6 @@ file* list_files_recursive(char *path, bool almost_all, bool all, int *count, in
 
     closedir(dir);
     *count = file_count;
-    *total = total_size;
+    *total = total_size / 2;
     return files;
 }
