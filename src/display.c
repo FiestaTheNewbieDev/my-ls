@@ -9,7 +9,7 @@
 #include "directory.h"
 #include "display.h"
 
-void simple_display(file_info* files, int file_count) {
+void simple_display(file* files, int file_count) {
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     int terminal_width = w.ws_col;
@@ -52,7 +52,7 @@ void print_permissions(mode_t mode) {
     printf("%s ", permissions);
 }
 
-void detailed_display(file_info* files, int file_count) {
+void detailed_display(file* files, int file_count) {
     printf("total %d\n", file_count);
 
     for (int i = 0; i < file_count; i++) {

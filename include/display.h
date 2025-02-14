@@ -3,7 +3,7 @@
 
 #include <directory.h>
 
-void simple_display(file_info* files, int file_count);
-void detailed_display(file_info* files, int file_count);
+void simple_display(file* files, int file_count);
+void detailed_display(file* files, int file_count);
 
 #endif
