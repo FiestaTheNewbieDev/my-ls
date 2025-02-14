@@ -12,7 +12,7 @@ typedef struct file {
 } file;
 
 bool is_directory(char *path);
-file* list_files(char *path, bool almost_all, bool all, int *count);
-file* list_files_recursive(char *path, bool almost_all, bool all, int *count);
+file* list_files(char *path, bool almost_all, bool all, int *count, int *total);
+file* list_files_recursive(char *path, bool almost_all, bool all, int *count, int *total);
 
 #endif

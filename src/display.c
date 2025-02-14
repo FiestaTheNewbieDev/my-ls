@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <string.h>
@@ -16,6 +17,8 @@ void simple_display(file* files, int file_count) {
 
     int max_file_length = 0;
     for (int i = 0; i < file_count; i++) {
+        if (files[i].name == NULL) exit(EXIT_FAILURE);
+
         int len = strlen(files[i].name);
         if (len > max_file_length) {
             max_file_length = len;
@@ -52,8 +55,8 @@ void print_permissions(mode_t mode) {
     printf("%s ", permissions);
 }
 
-void detailed_display(file* files, int file_count) {
-    printf("total %d\n", file_count);
+void detailed_display(file* files, int file_count, int total) {
+    printf("total %d\n", total);
 
     for (int i = 0; i < file_count; i++) {
         print_permissions(files[i].stat.st_mode);

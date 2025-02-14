@@ -16,11 +16,12 @@ bool is_directory(char *path) {
     return false;
 }
 
-file* list_files(char *path, bool almost_all, bool all, int *count) {
+file* list_files(char *path, bool almost_all, bool all, int *count, int *total) {
     DIR *dir;
     struct dirent *entry;
     file* files = NULL;
     int file_count = 0;
+    int total_size = 0;
 
     if (!is_directory(path)) return NULL;
 
@@ -53,19 +54,24 @@ file* list_files(char *path, bool almost_all, bool all, int *count) {
             return NULL;
         }
 
+        printf("- %s: %ld\n", files[file_count].name, files[file_count].stat.st_blocks);
+        total_size = files[file_count].stat.st_blocks;
+
         file_count++;
     }
 
     closedir(dir);
     *count = file_count;
+    *total = total_size;
     return files;
 }
 
-file* list_files_recursive(char *path, bool almost_all, bool all, int *count) {
+file* list_files_recursive(char *path, bool almost_all, bool all, int *count, int *total) {
     DIR *dir;
     struct dirent *entry;
     file* files = NULL;
     int file_count = 0;
+    int total_size = 0;
 
     if (!is_directory(path)) return NULL;
 
@@ -101,9 +107,11 @@ file* list_files_recursive(char *path, bool almost_all, bool all, int *count) {
         files[file_count].files = NULL;
         files[file_count].file_count = 0;
 
+        total_size += files[file_count].stat.st_blocks;
+
         if (S_ISDIR(files[file_count].stat.st_mode)) {
             int sub_count = 0;
-            files[file_count].files = list_files_recursive(full_path, almost_all, all, &sub_count);
+            files[file_count].files = list_files_recursive(full_path, almost_all, all, &sub_count, &total_size);
             files[file_count].file_count = sub_count;
         }
 
@@ -112,5 +120,6 @@ file* list_files_recursive(char *path, bool almost_all, bool all, int *count) {
 
     closedir(dir);
     *count = file_count;
+    *total = total_size;
     return files;
 }

@@ -4,6 +4,6 @@
 #include <directory.h>
 
 void simple_display(file* files, int file_count);
-void detailed_display(file* files, int file_count);
+void detailed_display(file* files, int file_count, int total);
 
 #endif
