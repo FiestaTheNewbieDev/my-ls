@@ -29,20 +29,7 @@ void add_folder(file **folders, int *folder_count, char *folder) {
     }
     *folders = tmp_folders;
 
-    (*folders)[*folder_count].name = strdup(folder);
-    if ((*folders)[*folder_count].name == NULL) {
-        perror("strdup");
-        free_files(*folders, *folder_count);
-        exit(EXIT_FAILURE);
-    }
-
-    (*folders)[*folder_count].path = strdup(folder);
-    if ((*folders)[*folder_count].path == NULL) {
-        perror("strdup");
-        free_files(*folders, *folder_count);
-        exit(EXIT_FAILURE);
-    }
-
+    (*folders)[*folder_count] = create_file(folder, folder);
     (*folder_count)++;
 }
 

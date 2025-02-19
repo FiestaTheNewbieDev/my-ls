@@ -64,15 +64,20 @@ int main(int argc, char *argv[]) {
     int flag_count = 0;
     char **flags = get_flags(argc, argv, &folders, &folder_count, &flag_count);
 
-    printf("flags:\n");
-    for (int i = 0; i < flag_count; i++) {
-        printf("%s \n", flags[i]);
+    bool recursive = includes(flags, flag_count, "-R") && folder_count <= 1;
+
+    list_files(folders, folder_count, includes(flags, flag_count, "-A"), includes(flags, flag_count, "-a"), recursive);
+
+    if (folders == NULL) {
+        free_files(folders, folder_count);
+        free(flags);
+        return EXIT_SUCCESS;
     }
 
-    printf("folders:\n");
-    for (int i = 0; i < folder_count; i++) {
-        printf("%s \n", folders[i].name);
-    }
+    if (includes(flags, flag_count, "-l")) {
+        printf("detailed display\n");
+        return EXIT_SUCCESS;
+    } else simple_display(folders, folder_count, recursive);
 
     return EXIT_SUCCESS;
 }

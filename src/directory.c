@@ -4,6 +4,7 @@
 #include <stdio.h>
 // #include <sys/stat.h>
 
+#include "file.h"
 #include "constants.h"
 #include "directory.h"
 
@@ -16,112 +17,57 @@ bool is_directory(char *path) {
     return false;
 }
 
-file* list_files(char *path, bool almost_all, bool all, int *count, int *total) {
-    DIR *dir;
-    struct dirent *entry;
-    file* files = NULL;
-    int file_count = 0;
-    int total_size = 0;
+void list_files(file *folders, int folder_count, bool almost_all, bool all, bool recursive) {
+    if (recursive) return;
 
-    if (!is_directory(path)) return NULL;
+    for (int i = 0; i < folder_count; i++) {
+        printf("%s\n", folders[i].path);
 
-    dir = opendir(path);
-    if (dir == NULL) return NULL;
+        DIR *dir;
+        struct dirent *entry;
 
-    while ((entry = readdir(dir)) != NULL) {
-        if (!all) {
-            if (almost_all) {
-                if (strcmp(entry->d_name, CURRENT_DIR) == 0 || strcmp(entry->d_name, PARENT_DIR) == 0) continue;
-            } else {
-                if (entry->d_name[0] == '.') continue;
+        file **files =  &folders[i].files;
+        int *file_count = &folders[i].file_count;
+
+        if (!is_directory(folders[i].path)) return;
+
+        dir = opendir(folders[i].path);
+        if (dir == NULL) return;
+
+        while ((entry = readdir(dir)) != NULL) {
+            if (!all) {
+                if (almost_all) {
+                    if (strcmp(entry->d_name, CURRENT_DIR) == 0 || strcmp(entry->d_name, PARENT_DIR) == 0) continue;
+                } else {
+                    if (entry->d_name[0] == '.') continue;
+                }
             }
-        }
 
-        char full_path[PATH_MAX];
-        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
-        
-        files = realloc(files, sizeof(file) * (file_count + 1));
-        if (files == NULL) {
-            closedir(dir);
-            return NULL;
-        }
+            char full_path[PATH_MAX];
+            snprintf(full_path, sizeof(full_path), "%s/%s", folders[i].path, entry->d_name);
 
-        files[file_count].name = strdup(entry -> d_name);
-        files[file_count].path = strdup(full_path);
-        if (stat(full_path, &files[file_count].stat) == -1) {
-            perror("stat");
-            closedir(dir);
-            free(files);
-            return NULL;
-        }
-
-        total_size += files[file_count].stat.st_blocks;
-
-        file_count++;
-    }
-
-    closedir(dir);
-    *count = file_count;
-    *total = total_size / 2;
-    return files;
-}
-
-file* list_files_recursive(char *path, bool almost_all, bool all, int *count, int *total) {
-    DIR *dir;
-    struct dirent *entry;
-    file* files = NULL;
-    int file_count = 0;
-    int total_size = 0;
-
-    if (!is_directory(path)) return NULL;
-
-    dir = opendir(path);
-    if (dir == NULL) return NULL;
-
-    while ((entry = readdir(dir)) != NULL) {
-        if (!all) {
-            if (almost_all) {
-                if (strcmp(entry->d_name, CURRENT_DIR) == 0 || strcmp(entry->d_name, PARENT_DIR) == 0) continue;
-            } else {
-                if (entry->d_name[0] == '.') continue;
+            file *tmp_files = realloc(*files, sizeof(file) * (*file_count + 1));
+            if (tmp_files == NULL) {
+                perror("realloc");
+                free_files(*files, *file_count);
+                closedir(dir);
+                return;
             }
+            *files = tmp_files;
+
+            (*files)[*file_count] = create_file(entry->d_name, full_path);
+            if (stat(full_path, &(*files)[*file_count].stat) == -1) {
+                perror("stat");
+                free_files(*files, *file_count);
+                closedir(dir);
+                return;
+            }
+
+            folders[i].total += (*files)[*file_count].stat.st_blocks / 2;
+
+            (*file_count)++;
         }
 
-        char full_path[PATH_MAX];
-        snprintf(full_path, sizeof(full_path), "%s/%s", path, entry->d_name);
-
-        files = realloc(files, sizeof(file) * (file_count + 1));
-        if (files == NULL) {
-            closedir(dir);
-            return NULL;
-        }
-
-        files[file_count].name = strdup(entry -> d_name);
-        files[file_count].path = strdup(full_path);
-        if (stat(full_path, &files[file_count].stat) == -1) {
-            perror("stat");
-            closedir(dir);
-            free(files);
-            return NULL;
-        }
-
-        files[file_count].files = NULL;
-        files[file_count].file_count = 0;
-
-        if (S_ISDIR(files[file_count].stat.st_mode)) {
-            int sub_count = 0;
-            int sub_total = 0;
-            files[file_count].files = list_files_recursive(full_path, almost_all, all, &sub_count, &sub_total);
-            files[file_count].file_count = sub_count;
-        }
-
-        total_size += files[file_count].stat.st_blocks + files[file_count].total;
-
-        file_count++;
+        closedir(dir);
     }
-
-    closedir(dir);
-    *count = file_count;
-    *total = total_size / 2;
-    return files;
 }

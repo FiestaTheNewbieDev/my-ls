@@ -8,7 +8,6 @@
 
 bool is_directory(char *path);
 
-file* list_files(char *path, bool almost_all, bool all, int *count, int *total);
-file* list_files_recursive(char *path, bool almost_all, bool all, int *count, int *total);
+void list_files(file *folders, int folder_count, bool almost_all, bool all, bool recursive);
 
 #endif

@@ -1,15 +1,35 @@
+#include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "file.h"
 
 file create_file(char *name, char *path) {
     file new_file;
-    new_file.name = name;
-    new_file.path = path;
+
+    if (name == NULL || path == NULL) {
+        fprintf(stderr, "Error: NULL string passed to create_file.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    new_file.name = strdup(name);
+    if (new_file.name == NULL) {
+        perror("strdup for name");
+        exit(EXIT_FAILURE);
+    }
+
+    new_file.path = strdup(path);
+    if (new_file.path == NULL) {
+        perror("strdup for path");
+        free(new_file.name);
+        exit(EXIT_FAILURE);
+    }
+
     // new_file.stat = NULL;
-    // new_file.files = NULL;
-    // new_file.file_count = 0;
-    // new_file.total = 0;
+
+    new_file.files = NULL;
+    new_file.file_count = 0;
+    new_file.total = 0;
 
     return new_file;
 }

@@ -8,45 +8,51 @@
 #include <time.h>
 #include <sys/types.h>
 
+#include "file.h"
 #include "directory.h"
 #include "display.h"
 
-void simple_display(file* files, int file_count, char *path, bool recursive) {
-    if (recursive) {
-        printf("%s:\n", path);
-    }
-
-    struct winsize w;
-    ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
-    int terminal_width = w.ws_col;
-
-    int max_file_length = 0;
-    for (int i = 0; i < file_count; i++) {
-        if (files[i].name == NULL) exit(EXIT_FAILURE);
-
-        int len = strlen(files[i].name);
-        if (len > max_file_length) {
-            max_file_length = len;
+void simple_display(file *folders, int folder_count, bool recursive) {
+    for (int i = 0; i < folder_count; i++) {
+        if (folder_count > 1) {
+            printf("%s:\n", folders[i].path);
         }
-    }
 
-    int columns = terminal_width / (max_file_length + 1);
-    if (columns == 0) columns = 1;
+        file *files = folders[i].files;
+        int file_count = folders[i].file_count;
 
-    for (int i = 0; i < file_count; i++) {
-        printf("%-*s", max_file_length + 1, files[i].name);
-        if ((i + 1) % columns == 0) {
+        struct winsize w;
+        ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
+        int terminal_width = w.ws_col;
+
+        int max_file_length = 0;
+        for (int i = 0; i < file_count; i++) {
+            if (files[i].name == NULL) exit(EXIT_FAILURE);
+
+            int len = strlen(files[i].name);
+            if (len > max_file_length) {
+                max_file_length = len;
+            }
+        }
+
+        int columns = terminal_width / (max_file_length + 1);
+        if (columns == 0) columns = 1;
+
+        for (int i = 0; i < file_count; i++) {
+            printf("%-*s", max_file_length + 1, files[i].name);
+            if ((i + 1) % columns == 0) {
+                printf("\n");
+            }
+        }
+        if (file_count % columns != 0) {
             printf("\n");
         }
-    }
-    if (file_count % columns != 0) {
-        printf("\n");
-    }
 
-    for (int i = 0; i < file_count; i++) {
-        if (recursive && is_directory(files[i].path)) {
-            printf("\n");
-            simple_display(files[i].files, files[i].file_count, files[i].path, files[i].file_count > 0);
+        for (int i = 0; i < file_count; i++) {
+            if (recursive && files[i].files) {
+                printf("\n");
+                simple_display(files[i].files, files[i].file_count, file_count > 0);
+            }
         }
     }
 }
