@@ -33,9 +33,9 @@ int main(int argc, char *argv[]) {
     }
 
     if (includes(flags, flag_count, "-l")) {
-        detailed_display(files, file_count, total);
+        detailed_display(files, file_count, total, path, includes(flags, flag_count, "-R"));
     } else {
-        simple_display(files, file_count);
+        simple_display(files, file_count, path, includes(flags, flag_count, "-R"));
     }
 
     return EXIT_SUCCESS;

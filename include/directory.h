@@ -5,10 +5,12 @@
 #define DIRECTORY_H
 
 typedef struct file {
-    char* name;
+    char *name;
+    char *path;
     struct stat stat;
     struct file *files;
     int file_count;
+    int total;
 } file;
 
 bool is_directory(char *path);

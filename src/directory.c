@@ -46,7 +46,8 @@ file* list_files(char *path, bool almost_all, bool all, int *count, int *total) 
             return NULL;
         }
 
-        files[file_count].name = strdup(entry->d_name);
+        files[file_count].name = strdup(entry -> d_name);
+        files[file_count].path = strdup(full_path);
         if (stat(full_path, &files[file_count].stat) == -1) {
             perror("stat");
             closedir(dir);
@@ -95,7 +96,8 @@ file* list_files_recursive(char *path, bool almost_all, bool all, int *count, in
             return NULL;
         }
 
-        files[file_count].name = strdup(full_path);
+        files[file_count].name = strdup(entry -> d_name);
+        files[file_count].path = strdup(full_path);
         if (stat(full_path, &files[file_count].stat) == -1) {
             perror("stat");
             closedir(dir);
@@ -106,13 +108,14 @@ file* list_files_recursive(char *path, bool almost_all, bool all, int *count, in
         files[file_count].files = NULL;
         files[file_count].file_count = 0;
 
-        total_size += files[file_count].stat.st_blocks;
-
         if (S_ISDIR(files[file_count].stat.st_mode)) {
             int sub_count = 0;
-            files[file_count].files = list_files_recursive(full_path, almost_all, all, &sub_count, &total_size);
+            int sub_total = 0;
+            files[file_count].files = list_files_recursive(full_path, almost_all, all, &sub_count, &sub_total);
             files[file_count].file_count = sub_count;
         }
+
+        total_size += files[file_count].stat.st_blocks + files[file_count].total;
 
         file_count++;
     }

@@ -11,7 +11,11 @@
 #include "directory.h"
 #include "display.h"
 
-void simple_display(file* files, int file_count) {
+void simple_display(file* files, int file_count, char *path, bool recursive) {
+    if (recursive) {
+        printf("%s:\n", path);
+    }
+
     struct winsize w;
     ioctl(STDOUT_FILENO, TIOCGWINSZ, &w);
     int terminal_width = w.ws_col;
@@ -38,6 +42,13 @@ void simple_display(file* files, int file_count) {
     if (file_count % columns != 0) {
         printf("\n");
     }
+
+    for (int i = 0; i < file_count; i++) {
+        if (recursive && is_directory(files[i].path)) {
+            printf("\n");
+            simple_display(files[i].files, files[i].file_count, files[i].path, files[i].file_count > 0);
+        }
+    }
 }
 
 void print_permissions(mode_t mode) {
@@ -56,7 +67,10 @@ void print_permissions(mode_t mode) {
     printf("%s ", permissions);
 }
 
-void detailed_display(file* files, int file_count, int total) {
+void detailed_display(file* files, int file_count, int total, char *path, bool recursive) {
+    if (recursive) {
+        printf("%s:\n", path);
+    }
     printf("total %d\n", total);
 
     for (int i = 0; i < file_count; i++) {
@@ -75,5 +89,12 @@ void detailed_display(file* files, int file_count, int total) {
         printf("%s ", timebuf);
 
         printf("%s\n", files[i].name);
+    }
+
+    for (int i = 0; i < file_count; i++) {
+        if (recursive && is_directory(files[i].path)) {
+            printf("\n");
+            detailed_display(files[i].files, files[i].file_count, files[i].total, files[i].path, files[i].file_count > 0);
+        }
     }
 }
