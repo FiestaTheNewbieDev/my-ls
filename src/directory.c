@@ -6,6 +6,8 @@
 #include "directory.h"
 #include <stdio.h>
 #include <sys/stat.h>
+#include <limits.h>
+
 
 bool is_directory(char *path) {
     DIR *dir = opendir(path);
