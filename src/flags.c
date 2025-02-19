@@ -3,49 +3,64 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "constants.h"
 #include "flags.h"
 #include "directory.h"
 #include "arrays.h"
 
-char** get_flags(int argc, char *argv[], char ***path, int *path_count, int *count) {
+void add_flag(char ***flags, int *flag_count, char *flag) {
+    char **tmp_flags = realloc(*flags, (*flag_count + 1) * sizeof(char*));
+    if (tmp_flags == NULL) {
+        perror("realloc");
+        free(*flags);
+        exit(EXIT_FAILURE);
+    }
+    *flags = tmp_flags;
+    (*flags)[*flag_count] = flag;
+    (*flag_count)++;
+}
+
+void add_folder(file **folders, int *folder_count, char *folder) {
+    file *tmp_folders = realloc(*folders, (*folder_count + 1) * sizeof(file));
+    if (tmp_folders == NULL) {
+        perror("realloc");
+        free_files(*folders, *folder_count);
+        exit(EXIT_FAILURE);
+    }
+    *folders = tmp_folders;
+
+    (*folders)[*folder_count].name = strdup(folder);
+    if ((*folders)[*folder_count].name == NULL) {
+        perror("strdup");
+        free_files(*folders, *folder_count);
+        exit(EXIT_FAILURE);
+    }
+
+    (*folders)[*folder_count].path = strdup(folder);
+    if ((*folders)[*folder_count].path == NULL) {
+        perror("strdup");
+        free_files(*folders, *folder_count);
+        exit(EXIT_FAILURE);
+    }
+
+    (*folder_count)++;
+}
+
+char** get_flags(int argc, char *argv[], file **folders, int *folder_count, int *flag_count) {
     char **flags = NULL;
-    int flag_count = 0;
 
-    for (int i = 0; i < argc; i++) {
-        if (argv[i][0] == '-') {
-            flags = realloc(flags, (flag_count + 1) * sizeof(char*));
-            flags[flag_count] = argv[i];
-            flag_count++;
-        } else { 
-            if (is_directory(argv[i])) {
-                size_t len = strlen(argv[i]) + 1;
-                char *new_path = malloc(len * sizeof(char));
-                if (new_path == NULL) {
-                    perror("malloc");
-                    free(flags);
-                    exit(EXIT_FAILURE);
-                }
-                strncpy(new_path, argv[i], len);
+    for (int i = 1; i < argc; i++) {
+        if (argv[i] == NULL || argv[i][0] == '\0') continue;
 
-                *path = realloc(*path, (*path_count + 1) * sizeof(char*));
-                if (*path == NULL) {
-                    perror("realloc");
-                    free(new_path);
-                    free(flags);
-                    exit(EXIT_FAILURE);
-                }
-
-                (*path)[*path_count] = new_path;
-                (*path_count)++;
-            }
+        if (argv[i][0] == '-') add_flag(&flags, flag_count, argv[i]);
+        else if (is_directory(argv[i])) add_folder(folders, folder_count, argv[i]);
+        else {
+            fprintf(stderr, "%s: cannot access '%s': No such file or directory\n", APP_NAME, argv[i]);
+            exit(EXIT_FAILURE);
         }
     }
 
-    if (len(*path) == 0) {
-        *path = malloc(1 * sizeof(char*));
-        (*path)[0] = ".";
-        (*path_count)++;
-    }
-    *count = flag_count;
+    if (*folder_count == 0) add_folder(folders, folder_count, ".");
+
     return flags;
 }
