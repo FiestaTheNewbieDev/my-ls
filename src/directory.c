@@ -1,13 +1,11 @@
 #include <stdlib.h>
 #include <dirent.h>
-#include <stdbool.h>
-#include <stddef.h>
 #include <string.h>
-#include "directory.h"
 #include <stdio.h>
-#include <sys/stat.h>
-#include <limits.h>
+// #include <sys/stat.h>
 
+#include "constants.h"
+#include "directory.h"
 
 bool is_directory(char *path) {
     DIR *dir = opendir(path);
@@ -33,7 +31,7 @@ file* list_files(char *path, bool almost_all, bool all, int *count, int *total) 
     while ((entry = readdir(dir)) != NULL) {
         if (!all) {
             if (almost_all) {
-                if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
+                if (strcmp(entry->d_name, CURRENT_DIR) == 0 || strcmp(entry->d_name, PARENT_DIR) == 0) continue;
             } else {
                 if (entry->d_name[0] == '.') continue;
             }
@@ -82,7 +80,7 @@ file* list_files_recursive(char *path, bool almost_all, bool all, int *count, in
     while ((entry = readdir(dir)) != NULL) {
         if (!all) {
             if (almost_all) {
-                if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
+                if (strcmp(entry->d_name, CURRENT_DIR) == 0 || strcmp(entry->d_name, PARENT_DIR) == 0) continue;
             } else {
                 if (entry->d_name[0] == '.') continue;
             }

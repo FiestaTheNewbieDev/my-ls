@@ -1,32 +1,13 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <stdbool.h>
-#include <stddef.h>
 #include <string.h>
+
 #include "flags.h"
 #include "arrays.h"
 #include "display.h"
 #include "directory.h"
 
 #define INITIAL_PATH_SIZE 1
-
-// void recursive(char *path, char **flags, int flag_count, int total) {
-//     int file_count;
-//     file* files = list_files(path, includes(flags, flag_count, "-A"), includes(flags, flag_count, "-a"), &file_count, total);
-
-//     if (files == NULL) {
-//         free(path);
-//         exit(EXIT_SUCCESS);
-//     }
-
-//     printf("%s:\n", path);
-//     if (includes(flags, flag_count, "-l")) {
-//         detailed_display(files, file_count, total);
-//     } else {
-//         simple_display(files, file_count);
-//     }
-//     printf("\n");
-// }
 
 int main(int argc, char *argv[]) {
     char *path = malloc(INITIAL_PATH_SIZE * sizeof(char));

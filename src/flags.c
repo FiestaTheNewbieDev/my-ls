@@ -1,9 +1,10 @@
-#include "flags.h"
-#include "directory.h"
 #include <stddef.h>
 #include <stdio.h>  
 #include <stdlib.h>
 #include <string.h>
+
+#include "flags.h"
+#include "directory.h"
 
 char **get_flags(int argc, char *argv[], char **path, int *count) {
     char **flags = NULL;

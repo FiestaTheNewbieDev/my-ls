@@ -1,8 +1,8 @@
-#ifndef DIRECTORY_H
-#define DIRECTORY_H
-
 #include <stdbool.h>
 #include <sys/stat.h>
+
+#ifndef DIRECTORY_H
+#define DIRECTORY_H
 
 typedef struct file {
     char* name;
