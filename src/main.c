@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
             printf("%s : \n", path[i]);
         }
 
-        if (includes(flags, flag_count, "-R")) {
+        if (includes(flags, flag_count, "-R") && path_count == 0) {
             files = list_files_recursive(path[i], includes(flags, flag_count, "-A"), includes(flags, flag_count, "-a"), &file_count, &total);
         } else {
             files = list_files(path[i], includes(flags, flag_count, "-A"), includes(flags, flag_count, "-a"), &file_count, &total);
@@ -43,9 +43,9 @@ int main(int argc, char *argv[]) {
         }
     
         if (includes(flags, flag_count, "-l")) {
-            detailed_display(files, file_count, total, path[i], includes(flags, flag_count, "-R"));
+            detailed_display(files, file_count, total, path[i], includes(flags, flag_count, "-R") && path_count == 0);
         } else {
-            simple_display(files, file_count, path[i], includes(flags, flag_count, "-R"));
+            simple_display(files, file_count, path[i], includes(flags, flag_count, "-R") && path_count == 0);
         }
 
         if (path_count > 1){
