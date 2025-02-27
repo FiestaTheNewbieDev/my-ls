@@ -13,6 +13,8 @@
 #include "display.h"
 
 void simple_display(file *folders, int folder_count, bool recursive) {
+    if (recursive) printf("\n");
+
     for (int i = 0; i < folder_count; i++) {
         if (folder_count > 1) {
             printf("%s:\n", folders[i].path);
@@ -48,11 +50,8 @@ void simple_display(file *folders, int folder_count, bool recursive) {
             printf("\n");
         }
 
-        for (int i = 0; i < file_count; i++) {
-            if (recursive && files[i].files) {
-                printf("\n");
-                simple_display(files[i].files, files[i].file_count, file_count > 0);
-            }
+        if (recursive && is_directory(folders[i].path)) {
+            simple_display(folders[i].files, folders[i].file_count, folder_count > 0);
         }
     }
 }

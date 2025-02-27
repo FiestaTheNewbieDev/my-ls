@@ -18,11 +18,7 @@ bool is_directory(char *path) {
 }
 
 void list_files(file *folders, int folder_count, bool almost_all, bool all, bool recursive) {
-    if (recursive) return;
-
     for (int i = 0; i < folder_count; i++) {
-        printf("%s\n", folders[i].path);
-
         DIR *dir;
         struct dirent *entry;
 
@@ -66,6 +62,10 @@ void list_files(file *folders, int folder_count, bool almost_all, bool all, bool
             folders[i].total += (*files)[*file_count].stat.st_blocks / 2;
 
             (*file_count)++;
+
+            if (recursive && is_directory((*files)[*file_count - 1].path)) {
+                list_files(*files, *file_count, almost_all, all, recursive);
+            }
         }
 
         closedir(dir);
