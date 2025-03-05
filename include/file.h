@@ -16,5 +16,6 @@ file create_file(char *name, char *path);
 
 void free_file(file *file);
 void free_files(file *files, int file_count);
+char *file_to_string(file file);
 
 #endif

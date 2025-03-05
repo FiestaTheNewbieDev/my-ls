@@ -56,3 +56,14 @@ void free_files(file *files, int file_count) {
 
     free(files);
 }
+
+char* file_to_string(file file) {
+    size_t size = snprintf(NULL, 0, "{\n  \"name\": \"%s\",\n  \"path\": \"%s\"\n}\n", file.name, file.path);
+    
+    char* result = malloc(size + 1);
+    if (!result) return NULL;
+    
+    snprintf(result, size + 1, "{\n  \"name\": \"%s\",\n  \"path\": \"%s\"\n}\n", file.name, file.path);
+    
+    return result;
+}
