@@ -77,34 +77,39 @@ void print_permissions(mode_t mode) {
     printf("%s ", permissions);
 }
 
-void detailed_display(file* files, int file_count, int total, char *path, bool recursive) {
-    if (recursive) {
-        printf("%s:\n", path);
-    }
-    printf("total %d\n", total);
-
-    for (int i = 0; i < file_count; i++) {
-        print_permissions(files[i].stat.st_mode);
-        printf("%ld ", (long)files[i].stat.st_nlink);
-
-        struct passwd *pw = getpwuid(files[i].stat.st_uid);
-        struct group *gr = getgrgid(files[i].stat.st_gid);
-        printf("%s %s ", pw->pw_name, gr->gr_name);
-
-        printf("%5ld ", (long)files[i].stat.st_size);
-
-        char timebuf[80];
-        struct tm *tm_info = localtime(&files[i].stat.st_mtime);
-        strftime(timebuf, sizeof(timebuf), "%b %d %H:%M", tm_info);
-        printf("%s ", timebuf);
-
-        printf("%s\n", files[i].name);
-    }
-
-    for (int i = 0; i < file_count; i++) {
-        if (recursive && is_directory(files[i].path)) {
-            printf("\n");
-            detailed_display(files[i].files, files[i].file_count, files[i].total, files[i].path, files[i].file_count > 0);
+void detailed_display(file *folders, int folder_count, bool recursive) {
+    for (int i = 0; i < folder_count; i++) {
+        if ((folder_count > 1 || recursive) && is_directory(folders[i].path)) {
+            printf("%s:\n", folders[i].path);
+            printf("total %d\n", folders[i].total);
         }
+        
+        file *files = folders[i].files;
+        int file_count = folders[i].file_count;
+
+        for (int i = 0; i < file_count; i++) {
+            print_permissions(files[i].stat.st_mode);
+            printf("%ld ", (long)files[i].stat.st_nlink);
+    
+            struct passwd *pw = getpwuid(files[i].stat.st_uid);
+            struct group *gr = getgrgid(files[i].stat.st_gid);
+            printf("%s %s ", pw->pw_name, gr->gr_name);
+    
+            printf("%5ld ", (long)files[i].stat.st_size);
+    
+            char timebuf[80];
+            struct tm *tm_info = localtime(&files[i].stat.st_mtime);
+            strftime(timebuf, sizeof(timebuf), "%b %d %H:%M", tm_info);
+            printf("%s ", timebuf);
+
+            if (is_directory(files[i].path)) {
+                printf("\033]8;;%s\033\\", files[i].path);
+                printf("%s", files[i].name);
+                printf("\033]8;;\033\\\n");
+            } else printf("%s\n", files[i].name);
+        }
+
+        if (recursive && is_directory(folders[i].path)) 
+            detailed_display(folders[i].files, folders[i].file_count, folder_count > 0);
     }
 }
