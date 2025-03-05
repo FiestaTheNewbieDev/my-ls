@@ -17,6 +17,14 @@ bool is_directory(char *path) {
     return false;
 }
 
+bool is_nav_dir(char *path) {
+    return strcmp(path, CURRENT_DIR) == 0 || strcmp(path, PARENT_DIR) == 0;
+}
+
+bool is_hidden(char *path) {
+    return path[0] == '.';
+}
+
 void list_files(file *folders, int folder_count, bool almost_all, bool all, bool recursive) {
     for (int i = 0; i < folder_count; i++) {
         DIR *dir;
@@ -33,9 +41,9 @@ void list_files(file *folders, int folder_count, bool almost_all, bool all, bool
         while ((entry = readdir(dir)) != NULL) {
             if (!all) {
                 if (almost_all) {
-                    if (strcmp(entry->d_name, CURRENT_DIR) == 0 || strcmp(entry->d_name, PARENT_DIR) == 0) continue;
+                    if (is_nav_dir(entry -> d_name)) continue;
                 } else {
-                    if (entry->d_name[0] == '.') continue;
+                    if (is_hidden(entry -> d_name)) continue;
                 }
             }
 
@@ -63,7 +71,7 @@ void list_files(file *folders, int folder_count, bool almost_all, bool all, bool
 
             (*file_count)++;
 
-            if (recursive && is_directory((*files)[*file_count - 1].path)) {
+            if (recursive && is_directory((*files)[*file_count - 1].path) && !is_nav_dir(entry->d_name)) {
                 list_files(*files, *file_count, almost_all, all, recursive);
             }
         }
