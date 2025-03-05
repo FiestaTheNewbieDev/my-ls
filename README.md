@@ -17,3 +17,8 @@
 ## Authors
 
 [**Clément FOSSORIER**](https://github.com/FiestaTheNewbieDev) & **Olivier VO**
+
+## Repository
+
+You can also find the source code for this project at the following GitHub repository:
+[FiestaTheNewbieDev/my-ls](https://github.com/FiestaTheNewbieDev/my-ls)
