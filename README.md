@@ -14,6 +14,11 @@
     - `-l`: Display detailed information for each file (permissions, owner, size, etc.).
     - `-R`: Recursively list all subdirectories and their contents.
 
+## Incoming features
+
+- `-t`: Sort files and directories by their modification date, from the most recent to the oldest.
+- `-r`: Reverse the order of sorting, displaying files and directories in the opposite order from the default.
+
 ## Authors
 
 [**Clément FOSSORIER**](https://github.com/FiestaTheNewbieDev) & **Olivier VO**
