@@ -113,3 +113,11 @@ void detailed_display(file *folders, int folder_count, bool recursive) {
             detailed_display(folders[i].files, folders[i].file_count, folder_count > 0);
     }
 }
+
+int compare_modification_time(const void *a, const void *b) {
+    file *fileA = (file *)a;
+    file *fileB = (file *)b;
+
+    printf("Time: %ld", fileA->stat.st_mtime);
+    return (fileB->stat.st_mtime - fileA->stat.st_mtime);
+}
