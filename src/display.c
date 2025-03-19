@@ -120,6 +120,6 @@ int display_folder_name(file *folders, int folder_count) {
             printf("%s  ", folders[i].name);
         }
     }
-
+    printf("\n"); 
     return 0;
 }

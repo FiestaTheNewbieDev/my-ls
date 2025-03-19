@@ -13,6 +13,7 @@
     - `-A`: Show hidden files, excluding `.` and `..`.
     - `-l`: Display detailed information for each file (permissions, owner, size, etc.).
     - `-R`: Recursively list all subdirectories and their contents.
+    - `-d`: Display the folder and file name if they exists
 
 ## Incoming features
 
