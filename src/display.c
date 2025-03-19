@@ -113,3 +113,13 @@ void detailed_display(file *folders, int folder_count, bool recursive) {
             detailed_display(folders[i].files, folders[i].file_count, folder_count > 0);
     }
 }
+
+int display_folder_name(file *folders, int folder_count) {
+    for (int i=0; i < folder_count; i++){
+        if (is_directory(folders[i].path)){
+            printf("%s  ", folders[i].name);
+        }
+    }
+
+    return 0;
+}

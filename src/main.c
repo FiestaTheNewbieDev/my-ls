@@ -26,6 +26,8 @@ int main(int argc, char *argv[]) {
         return EXIT_SUCCESS;
     }
 
+    if (includes(flags, flag_count, "-d")) return display_folder_name(folders, folder_count);
+
     if (includes(flags, flag_count, "-l")) {
         detailed_display(folders, folder_count, recursive);
     } else simple_display(folders, folder_count, recursive);
