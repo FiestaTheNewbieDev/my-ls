@@ -20,16 +20,17 @@ int main(int argc, char *argv[]) {
 
     list_files(folders, folder_count, includes(flags, flag_count, "-A"), includes(flags, flag_count, "-a"), recursive);
 
-    if (includes(flags, flag_count, "-t")){
-        for (int i = 0; i < folder_count; i++) {
-            qsort(folders[i].files, folders[i].file_count, sizeof(file), compare_modification_time);
-        }
-    }
-
     if (folders == NULL) {
         free_files(folders, folder_count);
         free(flags);
         return EXIT_SUCCESS;
+    }
+    
+    if (includes(flags, flag_count, "-t")){
+       sort_folders_by_modification_time(folders, folder_count, recursive);
+       for (int i = 0; i < folder_count; i++) {
+            qsort(folders[i].files, folders[i].file_count, sizeof(file), compare_modification_time);
+        }
     }
 
     if (includes(flags, flag_count, "-l")) {
