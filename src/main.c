@@ -25,6 +25,13 @@ int main(int argc, char *argv[]) {
         free(flags);
         return EXIT_SUCCESS;
     }
+    
+    if (includes(flags, flag_count, "-t")){
+       sort_folders_by_modification_time(folders, folder_count, recursive);
+       for (int i = 0; i < folder_count; i++) {
+            qsort(folders[i].files, folders[i].file_count, sizeof(file), compare_modification_time);
+        }
+    }
 
     if (includes(flags, flag_count, "-d")) return display_folder_name(folders, folder_count);
 

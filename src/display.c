@@ -114,6 +114,29 @@ void detailed_display(file *folders, int folder_count, bool recursive) {
     }
 }
 
+int compare_modification_time(const void *a, const void *b) {
+    const file *fileA = (const file *)a;
+    const file *fileB = (const file *)b;
+    
+    // printf("File A st_mtime: %ld; name: %s\n", fileA->stat.st_mtime, fileA->name);
+    // printf("File B st_mtime: %ld; name: %s\n", fileB->stat.st_mtime, fileB->name);
+    return (fileB->stat.st_mtime - fileA->stat.st_mtime);
+}
+
+void sort_folders_by_modification_time(file *folders, int folder_count, bool recursive) {
+    qsort(folders, folder_count, sizeof(file), compare_modification_time);
+
+    if (recursive) {
+        for (int i = 0; i < folder_count; i++) {
+            if (folders[i].files != NULL && folders[i].file_count > 0) {
+                qsort(folders[i].files, folders[i].file_count, sizeof(file), compare_modification_time);
+                sort_folders_by_modification_time(folders[i].files, folders[i].file_count, recursive);
+            }
+        }
+    }
+}
+
+
 int display_folder_name(file *folders, int folder_count) {
     for (int i=0; i < folder_count; i++){
         if (is_directory(folders[i].path)){
