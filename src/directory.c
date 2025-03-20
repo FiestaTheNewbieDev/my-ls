@@ -25,12 +25,21 @@ bool is_hidden(char *path) {
     return path[0] == '.';
 }
 
+bool is_already_listed(file *files, int file_count, const char *name) {
+    for (int i = 0; i < file_count; i++) {
+        if (strcmp(files[i].name, name) == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void list_files(file *folders, int folder_count, bool almost_all, bool all, bool recursive) {
     for (int i = 0; i < folder_count; i++) {
         DIR *dir;
         struct dirent *entry;
 
-        file **files =  &folders[i].files;
+        file **files = &folders[i].files;
         int *file_count = &folders[i].file_count;
 
         if (!is_directory(folders[i].path)) return;
@@ -41,10 +50,14 @@ void list_files(file *folders, int folder_count, bool almost_all, bool all, bool
         while ((entry = readdir(dir)) != NULL) {
             if (!all) {
                 if (almost_all) {
-                    if (is_nav_dir(entry -> d_name)) continue;
+                    if (is_nav_dir(entry->d_name)) continue;
                 } else {
-                    if (is_hidden(entry -> d_name)) continue;
+                    if (is_hidden(entry->d_name)) continue;
                 }
+            }
+
+            if (is_already_listed(*files, *file_count, entry->d_name)) {
+                continue;
             }
 
             char full_path[PATH_MAX];
@@ -68,11 +81,10 @@ void list_files(file *folders, int folder_count, bool almost_all, bool all, bool
             }
 
             folders[i].total += (*files)[*file_count].stat.st_blocks / 2;
-
             (*file_count)++;
 
             if (recursive && is_directory((*files)[*file_count - 1].path) && !is_nav_dir(entry->d_name)) {
-                list_files(*files, *file_count, almost_all, all, recursive);
+                list_files(&(*files)[*file_count - 1], 1, almost_all, all, recursive);
             }
         }
 
